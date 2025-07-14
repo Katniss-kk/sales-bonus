@@ -37,35 +37,21 @@ function calculateBonusByProfit(index, total, seller) {
  * @returns {Array} массив с результатами анализа по продавцам
  */
 function analyzeSalesData(data, options = {}) {
-    function processData(data, options) {
-  // Шаг 1. Проверка входных данных
-  if (!data 
-      || !Array.isArray(data.sellers)
-      || !Array.isArray(data.products)
-      || !Array.isArray(data.checks)
-      || data.sellers.length === 0
-      || data.products.length === 0
-      || data.checks.length === 0
-  ) {
-    throw new Error('Некорректные входные данные');
-  }
+    if (!data ||
+        !Array.isArray(data.sellers) ||
+        !Array.isArray(data.products) ||
+        !Array.isArray(data.purchase_records) ||
+        data.sellers.length === 0 ||
+        data.products.length === 0 ||
+        data.purchase_records.length === 0
+    ) {
+        throw new Error('Некорректные входные данные');
+    }
+     if (typeof options !== 'object' || options === null) {
+        throw new Error('Опции должны быть объектом');
+    }
 
-  
-  try {
     const { calculateRevenue, calculateBonus } = options;
-    
-    if (!calculateRevenue || !calculateBonus) {
-      throw new Error('Чего-то не хватает');
-    }
-    
-    if (typeof calculateRevenue !== 'function' || typeof calculateBonus !== 'function') {
-      throw new Error('Ожидались функции в опциях');
-    }
-    
-  } catch (error) {
-    throw new Error('Некорректные опции');
-  }
-}
 
     // Создаем индексы для быстрого доступа
     const productIndex = data.products.reduce((acc, product) => {

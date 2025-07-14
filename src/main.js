@@ -5,10 +5,11 @@
  * @returns {number} прибыль по позиции
  */
     function calculateSimpleRevenue(purchase, _product) {
-        const { discount = 0, sale_price = 0, quantity = 0 } = purchase;
-        const { purchase_price = 0 } = _product;
+        const { discount =   1 - (purchase.discount / 100)
+  , sale_price, quantity} = purchase;
+        const { purchase_price } = _product;
         
-        return (sale_price * (1 - (discount / 100)) - purchase_price) * quantity;
+        return (sale_price * quantity * discount);
     }
 
 /**

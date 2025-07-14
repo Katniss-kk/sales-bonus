@@ -19,10 +19,15 @@ function calculateSimpleRevenue(purchase, _product) {
  * @returns {number} бонусный коэффициент
  */
 function calculateBonusByProfit(index, total, seller) {
-    if (index === 0) return 0.15;
-    if (index === 1 || index === 2) return 0.10;
-    if (index === total - 1) return 0;
-    return 0.05;
+    if (index === 0) {
+        return 0.15;
+    } else if (index === 1 || index === 2) {
+        return 0.10;
+    } else if (index === total - 1) {
+        return 0;
+    } else {
+        return 0.05;
+    }
 }
 
 /**

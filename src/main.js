@@ -47,11 +47,15 @@ function analyzeSalesData(data, options = {}) {
     ) {
         throw new Error('Некорректные входные данные');
     }
-     if (typeof options !== 'object' || options === null) {
+    const { calculateRevenue, calculateBonus } = options;
+    if (typeof options !== 'object' || options === null) {
         throw new Error('Опции должны быть объектом');
     }
 
-    const { calculateRevenue, calculateBonus } = options;
+    if (typeof calculateRevenue !== 'function' || typeof calculateBonus !== 'function') {
+        throw new Error('calculateRevenue и calculateBonus должны быть функциями');
+    }
+
 
     // Создаем индексы для быстрого доступа
     const productIndex = data.products.reduce((acc, product) => {

@@ -4,12 +4,12 @@
  * @param _product карточка товара
  * @returns {number} прибыль по позиции
  */
-    function calculateSimpleRevenue(purchase, _product) {
-        const { discount = 0, sale_price = 0, quantity = 0} = purchase;
-        const { purchase_price } = _product;
-        
-        return (sale_price * (1 - (discount / 100))) * quantity;
-    }
+function calculateSimpleRevenue(purchase, _product) {
+    const { discount = 0, sale_price = 0, quantity = 0 } = purchase;
+    const { purchase_price = 0 } = _product || {};
+    
+    return (sale_price * (1 - (discount / 100)) - purchase_price) * quantity;
+}
 
 /**
  * Функция для расчета бонусного коэффициента
@@ -20,13 +20,13 @@
  */
 function calculateBonusByProfit(index, total, seller) {
     if (index === 0) {
-        return 150;
+        return 0.15; // 150%
     } else if (index === 1 || index === 2) {
-        return 100;
+        return 0.1; // 100%
     } else if (index === total - 1) {
         return 0;
     } else {
-        return 50;
+        return 0.050; // 50%
     }
 }
 
@@ -37,13 +37,13 @@ function calculateBonusByProfit(index, total, seller) {
  * @returns {Array} массив с результатами анализа по продавцам
  */
 function analyzeSalesData(data, options = {}) {
-    if (!data
-        || !Array.isArray(data.sellers)
-        || !Array.isArray(data.products)
-        || !Array.isArray(data.purchase_records)
-        || data.sellers.length === 0
-        || data.products.length === 0
-        || data.purchase_records.length === 0
+    if (!data ||
+        !Array.isArray(data.sellers) ||
+        !Array.isArray(data.products) ||
+        !Array.isArray(data.purchase_records) ||
+        data.sellers.length === 0 ||
+        data.products.length === 0 ||
+        data.purchase_records.length === 0
     ) {
         throw new Error('Некорректные входные данные');
     }
@@ -93,8 +93,8 @@ function analyzeSalesData(data, options = {}) {
 
     // Назначаем бонусы
     sellerStats.forEach((seller, index) => {
-        // Рассчитываем и записываем бонус
-        seller.bonus = calculateBonusByProfit(index, sellerStats.length, seller);
+        const bonusRate = calculateBonusByProfit(index, sellerStats.length, seller);
+        seller.bonus = parseFloat((bonusRate * seller.profit).toFixed(2));
         
         // Формируем топ-10 товаров
         seller.top_products = Object.entries(seller.products_sold)
@@ -110,10 +110,7 @@ function analyzeSalesData(data, options = {}) {
         revenue: parseFloat(seller.revenue.toFixed(2)),
         profit: parseFloat(seller.profit.toFixed(2)),
         sales_count: seller.sales_count,
-        top_products: Object.entries(seller.products_sold)
-            .map(([sku, quantity]) => ({ sku, quantity }))
-            .sort((a, b) => b.quantity - a.quantity)
-            .slice(0, 10),
-        bonus: parseFloat((seller.bonus * seller.profit).toFixed(2))
+        top_products: seller.top_products,
+        bonus: seller.bonus
     }));
 }

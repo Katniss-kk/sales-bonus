@@ -8,7 +8,7 @@
         const { discount = 1, sale_price = 0, quantity = 0 } = purchase;
         const { purchase_price = 0 } = _product;
         // Выручка с учетом скидки минус себестоимость, умноженная на количество
-        return (sale_price * (1 - discount / 100) - purchase_price) * quantity;
+        return (sale_price * (1 - (discount / 100)) - purchase_price) * quantity;
     }
 
 /**
@@ -37,7 +37,14 @@ function calculateBonusByProfit(index, total, seller) {
  * @returns {Array} массив с результатами анализа по продавцам
  */
 function analyzeSalesData(data, options = {}) {
-    if (!data?.sellers?.length || !data?.products?.length || !data?.purchase_records?.length) {
+    if (!data
+        || !Array.isArray(data.sellers)
+        || !Array.isArray(data.products)
+        || !Array.isArray(data.purchase_records)
+        || data.sellers.length === 0
+        || data.products.length === 0
+        || data.purchase_records.length === 0
+    ) {
         throw new Error('Некорректные входные данные');
     }
 

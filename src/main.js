@@ -4,18 +4,12 @@
  * @param _product карточка товара
  * @returns {number} прибыль по позиции
  */
-function calculateSimpleRevenue(purchase, _product) {
-    const { discount = 0, sale_price = 0, quantity = 0 } = purchase;
-    const { purchase_price = 0 } = _product;
-
-    if (discount === 0) {
-        // Если скидки нет, просто (цена продажи - себестоимость) × количество
-        return (sale_price - purchase_price) * quantity;
-    } else {
-        // Если есть скидка, применяем её
+    function calculateSimpleRevenue(purchase, _product) {
+        const { discount = 1, sale_price = 0, quantity = 0 } = purchase;
+        const { purchase_price = 0 } = _product;
+        // Выручка с учетом скидки минус себестоимость, умноженная на количество
         return (sale_price * (1 - discount / 100) - purchase_price) * quantity;
     }
-}
 
 /**
  * Функция для расчета бонусного коэффициента

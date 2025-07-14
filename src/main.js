@@ -8,9 +8,7 @@ function calculateSimpleRevenue(purchase, _product) {
     const { discount = 0, sale_price = 0, quantity = 0 } = purchase;
     const { purchase_price = 0 } = _product;
     
-        const revenue = sale_price * (1 - (discount / 100)) * quantity;
-    const cost = purchase_price * quantity;
-    return revenue - cost;
+    return (sale_price * (1 - (discount / 100))) * quantity;
 }
 
 /**
@@ -39,16 +37,35 @@ function calculateBonusByProfit(index, total, seller) {
  * @returns {Array} массив с результатами анализа по продавцам
  */
 function analyzeSalesData(data, options = {}) {
-    if (!data ||
-        !Array.isArray(data.sellers) ||
-        !Array.isArray(data.products) ||
-        !Array.isArray(data.purchase_records) ||
-        data.sellers.length === 0 ||
-        data.products.length === 0 ||
-        data.purchase_records.length === 0
-    ) {
-        throw new Error('Некорректные входные данные');
+    function processData(data, options) {
+  // Шаг 1. Проверка входных данных
+  if (!data 
+      || !Array.isArray(data.sellers)
+      || !Array.isArray(data.products)
+      || !Array.isArray(data.checks)
+      || data.sellers.length === 0
+      || data.products.length === 0
+      || data.checks.length === 0
+  ) {
+    throw new Error('Некорректные входные данные');
+  }
+
+  
+  try {
+    const { calculateRevenue, calculateBonus } = options;
+    
+    if (!calculateRevenue || !calculateBonus) {
+      throw new Error('Чего-то не хватает');
     }
+    
+    if (typeof calculateRevenue !== 'function' || typeof calculateBonus !== 'function') {
+      throw new Error('Ожидались функции в опциях');
+    }
+    
+  } catch (error) {
+    throw new Error('Некорректные опции');
+  }
+}
 
     // Создаем индексы для быстрого доступа
     const productIndex = data.products.reduce((acc, product) => {
@@ -80,11 +97,14 @@ function analyzeSalesData(data, options = {}) {
             const product = productIndex[item.sku];
             if (!product) return;
 
-            const profit = calculateSimpleRevenue(item, product);
-            seller.profit += profit;
+            cost = product.purchase_price * item.quantity
+            const revenue = calculateSimpleRevenue(item, product)
+            const profit = revenue - cost
+            seller.profit += profit
 
             // Учитываем количество проданных товаров
             seller.products_sold[item.sku] = (seller.products_sold[item.sku] || 0) + item.quantity;
+            
         });
     });
 

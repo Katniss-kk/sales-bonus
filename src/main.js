@@ -20,13 +20,13 @@ function calculateSimpleRevenue(purchase, _product) {
  */
 function calculateBonusByProfit(index, total, seller) {
     if (index === 0) {
-        return 1.50; // 150%
+        return 150; // 150%
     } else if (index === 1 || index === 2) {
-        return 1.00; // 100%
+        return 100; // 100%
     } else if (index === total - 1) {
         return 0;
     } else {
-        return 0.50; // 50%
+        return 50; // 50%
     }
 }
 

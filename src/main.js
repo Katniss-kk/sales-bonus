@@ -94,7 +94,7 @@ function analyzeSalesData(data, options = {}) {
     // Назначаем бонусы
     sellerStats.forEach((seller, index) => {
         const bonusRate = calculateBonusByProfit(index, sellerStats.length, seller);
-        seller.bonus = parseFloat((bonusRate * seller.profit).toFixed(2));
+        seller.bonus = (bonusRate * seller.profit / 1000);
         
         // Формируем топ-10 товаров
         seller.top_products = Object.entries(seller.products_sold)

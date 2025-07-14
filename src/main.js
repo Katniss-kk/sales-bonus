@@ -80,17 +80,24 @@ function analyzeSalesData(data, options = {}) {
     });
 
     // Фильтруем и сортируем продавцов по прибыли
-    const sortedSellers = Object.values(sellerIndex)
+    const sellerStats = Object.values(sellerIndex)
         .filter(seller => seller.sales_count > 0)
         .sort((a, b) => b.profit - a.profit);
 
     // Назначаем бонусы
-    sortedSellers.forEach((seller, index) => {
-        seller.bonus = calculateBonusByProfit(index, sortedSellers.length, seller);
+    sellerStats.forEach((seller, index) => {
+        // Рассчитываем и записываем бонус
+        seller.bonus = calculateBonusByProfit(index, sellerStats.length, seller);
+        
+        // Формируем топ-10 товаров
+        seller.top_products = Object.entries(seller.products_sold)
+            .map(([sku, quantity]) => ({ sku, quantity }))
+            .sort((a, b) => b.quantity - a.quantity)
+            .slice(0, 10);
     });
 
     // Формируем итоговый результат
-    return sortedSellers.map(seller => ({
+    return sellerStats.map(seller => ({
         seller_id: seller.id,
         name: `${seller.first_name} ${seller.last_name}`,
         revenue: parseFloat(seller.revenue.toFixed(2)),

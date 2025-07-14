@@ -6,7 +6,7 @@
  */
 function calculateSimpleRevenue(purchase, _product) {
     const { discount = 0, sale_price = 0, quantity = 0 } = purchase;
-    const { purchase_price = 0 } = _product || {};
+    const { purchase_price = 0 } = _product;
     
     return (sale_price * (1 - (discount / 100)) - purchase_price) * quantity;
 }
@@ -20,13 +20,13 @@ function calculateSimpleRevenue(purchase, _product) {
  */
 function calculateBonusByProfit(index, total, seller) {
     if (index === 0) {
-        return 0.15; // 150%
+        return 1.50; // 150%
     } else if (index === 1 || index === 2) {
-        return 0.1; // 100%
+        return 1.00; // 100%
     } else if (index === total - 1) {
         return 0;
     } else {
-        return 0.050; // 50%
+        return 0.50; // 50%
     }
 }
 
@@ -107,10 +107,10 @@ function analyzeSalesData(data, options = {}) {
     return sellerStats.map(seller => ({
         seller_id: seller.id,
         name: `${seller.first_name} ${seller.last_name}`,
-        revenue: parseFloat(seller.revenue.toFixed(2)),
-        profit: parseFloat(seller.profit.toFixed(2)),
+        revenue: +seller.revenue.toFixed(2),
+        profit: +seller.profit.toFixed(2),
         sales_count: seller.sales_count,
         top_products: seller.top_products,
-        bonus: seller.bonus
+        bonus: +seller.bonus.toFixed(2)
     }));
 }
